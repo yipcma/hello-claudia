@@ -18,10 +18,10 @@ const app = botBuilder(function(request, originalApiRequest) {
         return rp.get('https://api.wit.ai/message?v=20161113&q=' + request.text, options).then(function(response) {
             console.log('got response', response.body);
             const reply = JSON.parse(response.body);
-            return 'Your request was ' + reply._text;
+            return reply.entities.from[0].value + ' => ' + reply.entities.to[0].value + ' @' + reply.entities.datetime[0].values[0].value + ', right?';
         }, function(response) {
             console.log('got error', response.body);
-            return 'error!';
+            return 'Sorry, I did\'t get that, again?';
         })
 
 });
