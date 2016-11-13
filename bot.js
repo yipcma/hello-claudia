@@ -14,14 +14,15 @@ const app = botBuilder(function(request, originalApiRequest) {
         headers: headers
     };
 
-    return rp.get('https://api.wit.ai/message?v=20161113&q=' + request.text, options).then(function(response) {
-        const reply = JSON.parse(response.body)
-        console.log('got response', reply);
-        return 'Your request was ' + reply._text;
-    }, function(response) {
-        console.log('got error', response.body);
-        return 'error!';
-    })
+    if (request.sender !== '1386501818046647')
+        return rp.get('https://api.wit.ai/message?v=20161113&q=' + request.text, options).then(function(response) {
+            console.log('got response', response.body);
+            const reply = JSON.parse(response.body);
+            return 'Your request was ' + reply._text;
+        }, function(response) {
+            console.log('got error', response.body);
+            return 'error!';
+        })
 
 });
 
