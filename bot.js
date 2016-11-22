@@ -29,9 +29,11 @@ const app = botBuilder(function(request, originalApiRequest) {
     const locApiKey = originalApiRequest.env.locationiqApiKey;
     if (request.text)
     return getWitParse(witaiApiKey, request.text).then((response) => {
-      const from = JSON.parse(response.body).entities.from[0].value;
-      console.log(from)
-      return from;
+      const res = JSON.parse(response.body).entities;
+      const from = res.from[0].value;
+      const to = res.to[0].value;
+      const datetime = res.datetime[0].value;
+      return from + to + datetime;
     });
       // return getWitParse(witaiApiKey, request.text).then((response) => {
       //   const res = JSON.parse(response.body);
