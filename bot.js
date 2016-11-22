@@ -33,12 +33,16 @@ const app = botBuilder(function(request, originalApiRequest) {
       const from = res.from[0].value;
       const to = res.to[0].value;
       const datetime = res.datetime[0].value;
-      return getGeocode(locApiKey, from);
+      return Promise.all([getGeocode(locApiKey, from), getGeocode(locApiKey, to)]);
     }).then((response) => {
-      const res = JSON.parse(response.body)[0];
-      const lat = res.lat;
-      const lon = res.lon;
-      return `lat: ${lat}, lon: ${lon}`;
+      const ll = response.map(function(response) {
+        const res = JSON.parse(response.body)[0];
+        const lat = res.lat;
+        const lon = res.lon;
+        return {lat: lat, lon: lon};
+      })
+      console.log(ll);
+      return 'done';
     });
       // return getWitParse(witaiApiKey, request.text).then((response) => {
       //   const res = JSON.parse(response.body);
