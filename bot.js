@@ -27,9 +27,13 @@ function getGeocode(apikey, loc) {
 }
 
 function getRoute(ll, datetime) {
-  const time = datetime.format('{HH}:{mm}');
-  const date = datetime.format('{MM}-{dd}-{yyyy}');
-  const url = `http://kapp.ddns.net:8080/otp/routers/default/plan?fromPlace=${ll[0].lat},${ll[0].lon}&toPlace=${ll[1].lat},${ll[1].lon}&time=${time}&date=${date}&mode=TRANSIT,WALK&maxWalkDistance=500&arriveBy=false&wheelchair=false&locale=en`;
+  // TODO: fix date parsing and timezone
+  const dt = new Date.create(datetime);
+  const time = dt.format('{HH}:{mm}');
+  const date = dt.format('{MM}-{dd}-{yyyy}');
+  const url = `http://kmon.ddns.net:8080/otp/routers/default/plan?fromPlace=${ll[0].lat},${ll[0].lon}&toPlace=${ll[1].lat},${ll[1].lon}&time=${time}&date=${date}&mode=TRANSIT,WALK&maxWalkDistance=500&arriveBy=false&wheelchair=false&locale=en`;
+  console.log(dt, url);
+
   return rp.get(url);
 }
 
@@ -57,10 +61,11 @@ const app = botBuilder(function(request, originalApiRequest) {
       });
       return getRoute(ll, datetime);
     }).then((response) => {
-      const res = JSON.parse(response);
-      return res.plan.itineries[0].duration;
+      const res = JSON.parse(response.body);
+      const msg = res.plan.itineraries[0].duration + ' seconds';
+      return msg;
     }).catch((e) => {
-      return "got issues " + e;
+      return "[error] " + e;
     });
   }
 );
