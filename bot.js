@@ -13,16 +13,17 @@ function getWitParse(apikey, message) {
         headers: headers
     };
     const url = `https://api.wit.ai/message?v=20161113&q=${message}`
-    return rp.get(url, options)
+    return rp.get(url, options);
 }
 
 // TODO: fix result filtering
 function getGeocode(apikey, loc) {
     const url = `http://locationiq.org/v1/search.php?key=${apikey}&format=json&q=${loc}&viewbox=38.99323,22.35786,39.17330,22.24668&bounded=1&limit=1`
     // TODO: fix locationiq not called properly
-    return rp.get(url)
+    return rp.get(url);
   }
 
+// TODO: somehow the code doesn't like .done()
 const app = botBuilder(function(request, originalApiRequest) {
     const witaiApiKey = originalApiRequest.env.witaiApiKey;
     const locApiKey = originalApiRequest.env.locationiqApiKey;
@@ -32,7 +33,12 @@ const app = botBuilder(function(request, originalApiRequest) {
       const from = res.from[0].value;
       const to = res.to[0].value;
       const datetime = res.datetime[0].value;
-      return getGeocode(locApiKey, from).then(JSON.stringify);
+      return getGeocode(locApiKey, from);
+    }).then((response) => {
+      const res = JSON.parse(response.body)[0];
+      const lat = res.lat;
+      const lon = res.lon;
+      return `lat: ${lat}, lon: ${lon}`;
     });
       // return getWitParse(witaiApiKey, request.text).then((response) => {
       //   const res = JSON.parse(response.body);
