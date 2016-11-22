@@ -45,6 +45,8 @@ const app = botBuilder(function(request, originalApiRequest) {
   if (request.text)
     return getWitParse(witaiApiKey, request.text).then((response) => {
       const res = JSON.parse(response.body).entities;
+      console.log(res);
+
       const from = res.from[0].value;
       const to = res.to[0].value;
       datetime = res.datetime[0].value;
@@ -62,6 +64,8 @@ const app = botBuilder(function(request, originalApiRequest) {
       return getRoute(ll, datetime);
     }).then((response) => {
       const res = JSON.parse(response.body);
+      console.log(res);
+
       const msg = res.plan.itineraries[0].duration + ' seconds';
       return msg;
     }).catch((e) => {
